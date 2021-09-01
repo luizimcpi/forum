@@ -2,24 +2,20 @@ package br.com.devlhse.forum.service
 
 import br.com.devlhse.forum.dto.NovoTopicoForm
 import br.com.devlhse.forum.dto.TopicoView
+import br.com.devlhse.forum.mapper.TopicoFormMapper
+import br.com.devlhse.forum.mapper.TopicoViewMapper
 import br.com.devlhse.forum.model.Topico
 import org.springframework.stereotype.Service
 
 @Service
-class TopicoService(private val cursoService: CursoService,
-                    private val usuarioService: UsuarioService,
+class TopicoService(private val topicoViewMapper: TopicoViewMapper,
+                    private val topicoFormMapper: TopicoFormMapper,
                     private var topicos: List<Topico> = ArrayList()) {
 
 
     fun listar(): List<TopicoView> {
         return topicos.map {
-            TopicoView(
-                    id = it.id!!,
-                    titulo = it.titulo,
-                    mensagem = it.mensagem,
-                    status = it.status,
-                    dataCriacao = it.dataCriacao
-            )
+            topicoViewMapper.map(it)
         }
     }
 
@@ -28,24 +24,13 @@ class TopicoService(private val cursoService: CursoService,
             topico.id == id
         }
 
-        return TopicoView(
-                id = topico.id!!,
-                titulo = topico.titulo,
-                mensagem = topico.mensagem,
-                status = topico.status,
-                dataCriacao = topico.dataCriacao
-        )
+        return topicoViewMapper.map(topico)
     }
 
-    fun cadastrar(topicoDto: NovoTopicoForm) {
+    fun cadastrar(novoTopicoForm: NovoTopicoForm) {
+        val topico = topicoFormMapper.map(novoTopicoForm)
         topicos = topicos.plus(
-                Topico(
-                        id = topicos.size.toLong() + 1,
-                        titulo = topicoDto.titulo,
-                        mensagem = topicoDto.mensagem,
-                        curso = cursoService.buscarPorId(topicoDto.idCurso),
-                        autor = usuarioService.buscarPorId(topicoDto.idAutor)
-                )
+            topico.copy(id = topicos.size.toLong() + 1)
         )
     }
 }
