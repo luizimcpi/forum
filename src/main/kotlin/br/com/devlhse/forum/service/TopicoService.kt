@@ -1,6 +1,7 @@
 package br.com.devlhse.forum.service
 
-import br.com.devlhse.forum.dto.NovoTopicoDto
+import br.com.devlhse.forum.dto.NovoTopicoForm
+import br.com.devlhse.forum.dto.TopicoView
 import br.com.devlhse.forum.model.Topico
 import org.springframework.stereotype.Service
 
@@ -10,17 +11,33 @@ class TopicoService(private val cursoService: CursoService,
                     private var topicos: List<Topico> = ArrayList()) {
 
 
-    fun listar(): List<Topico> {
-        return topicos
-    }
-
-    fun buscarPorId(id: Long): Topico {
-        return topicos.first { topico ->
-            topico.id == id
+    fun listar(): List<TopicoView> {
+        return topicos.map {
+            TopicoView(
+                    id = it.id!!,
+                    titulo = it.titulo,
+                    mensagem = it.mensagem,
+                    status = it.status,
+                    dataCriacao = it.dataCriacao
+            )
         }
     }
 
-    fun cadastrar(topicoDto: NovoTopicoDto) {
+    fun buscarPorId(id: Long): TopicoView {
+        val topico = topicos.first { topico ->
+            topico.id == id
+        }
+
+        return TopicoView(
+                id = topico.id!!,
+                titulo = topico.titulo,
+                mensagem = topico.mensagem,
+                status = topico.status,
+                dataCriacao = topico.dataCriacao
+        )
+    }
+
+    fun cadastrar(topicoDto: NovoTopicoForm) {
         topicos = topicos.plus(
                 Topico(
                         id = topicos.size.toLong() + 1,
