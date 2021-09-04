@@ -1,5 +1,6 @@
 package br.com.devlhse.forum.service
 
+import br.com.devlhse.forum.dto.AtualizacaoTopicoForm
 import br.com.devlhse.forum.dto.NovoTopicoForm
 import br.com.devlhse.forum.dto.TopicoView
 import br.com.devlhse.forum.mapper.TopicoFormMapper
@@ -32,5 +33,23 @@ class TopicoService(private val topicoViewMapper: TopicoViewMapper,
         topicos = topicos.plus(
             topico.copy(id = topicos.size.toLong() + 1)
         )
+    }
+
+    fun atualizar(form: AtualizacaoTopicoForm) {
+        val topico = topicos.first { topico ->
+            topico.id == form.id
+        }
+
+        topicos = topicos.minus(topico).plus(Topico(
+            id = form.id,
+            titulo = form.titulo,
+            mensagem = form.mensagem,
+            autor = topico.autor,
+            curso = topico.curso,
+            respostas = topico.respostas,
+            status = topico.status,
+            dataCriacao = topico.dataCriacao,
+            
+        ))
     }
 }
