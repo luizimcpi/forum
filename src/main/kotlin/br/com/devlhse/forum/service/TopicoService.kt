@@ -49,7 +49,14 @@ class TopicoService(private val topicoViewMapper: TopicoViewMapper,
             respostas = topico.respostas,
             status = topico.status,
             dataCriacao = topico.dataCriacao,
-            
+
         ))
+    }
+
+    fun deletar(id: Long) {
+        val topico = topicos.first { topico ->
+            topico.id == id
+        }
+        topicos = topicos.minus(topico)
     }
 }
