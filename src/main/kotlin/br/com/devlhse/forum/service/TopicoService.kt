@@ -7,6 +7,8 @@ import br.com.devlhse.forum.exception.NotFoundException
 import br.com.devlhse.forum.mapper.TopicoFormMapper
 import br.com.devlhse.forum.mapper.TopicoViewMapper
 import br.com.devlhse.forum.repository.TopicoRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,11 +19,14 @@ class TopicoService(private val topicoViewMapper: TopicoViewMapper,
 ) {
 
 
-    fun listar(nomeCurso: String?): List<TopicoView> {
+    fun listar(
+        nomeCurso: String?,
+        paginacao: Pageable
+    ): Page<TopicoView> {
         val topicos = if(nomeCurso == null){
-            repository.findAll()
+            repository.findAll(paginacao)
         } else {
-            repository.findByCursoNome(nomeCurso)
+            repository.findByCursoNome(nomeCurso, paginacao)
         }
 
         return topicos.map {
