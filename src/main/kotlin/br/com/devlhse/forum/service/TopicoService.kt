@@ -3,6 +3,7 @@ package br.com.devlhse.forum.service
 import br.com.devlhse.forum.dto.AtualizacaoTopicoForm
 import br.com.devlhse.forum.dto.NovoTopicoForm
 import br.com.devlhse.forum.dto.TopicoView
+import br.com.devlhse.forum.exception.NotFoundException
 import br.com.devlhse.forum.mapper.TopicoFormMapper
 import br.com.devlhse.forum.mapper.TopicoViewMapper
 import br.com.devlhse.forum.model.Topico
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service
 @Service
 class TopicoService(private val topicoViewMapper: TopicoViewMapper,
                     private val topicoFormMapper: TopicoFormMapper,
-                    private var topicos: List<Topico> = ArrayList()) {
+                    private var topicos: List<Topico> = ArrayList(),
+                    private val notFoundMessage: String = "Tópico não encontrado!"
+) {
 
 
     fun listar(): List<TopicoView> {
@@ -21,9 +24,9 @@ class TopicoService(private val topicoViewMapper: TopicoViewMapper,
     }
 
     fun buscarPorId(id: Long): TopicoView {
-        val topico = topicos.first { topico ->
+        val topico = topicos.firstOrNull { topico ->
             topico.id == id
-        }
+        } ?: throw NotFoundException(notFoundMessage)
 
         return topicoViewMapper.map(topico)
     }
@@ -36,9 +39,10 @@ class TopicoService(private val topicoViewMapper: TopicoViewMapper,
     }
 
     fun atualizar(form: AtualizacaoTopicoForm): TopicoView {
-        val topico = topicos.first { topico ->
+        val topico = topicos.firstOrNull { topico ->
             topico.id == form.id
-        }
+        } ?: throw NotFoundException(notFoundMessage)
+
         val topicoAtualizado = Topico(
             id = form.id,
             titulo = form.titulo,
@@ -55,9 +59,9 @@ class TopicoService(private val topicoViewMapper: TopicoViewMapper,
     }
 
     fun deletar(id: Long) {
-        val topico = topicos.first { topico ->
+        val topico = topicos.firstOrNull { topico ->
             topico.id == id
-        }
+        } ?: throw NotFoundException(notFoundMessage)
         topicos = topicos.minus(topico)
     }
 }
