@@ -64,4 +64,11 @@ class TopicoService(private val topicoViewMapper: TopicoViewMapper,
     fun deletar(id: Long) {
         repository.deleteById(id)
     }
+
+    fun relatorio(): List<TopicoView> {
+        val topicosNaoRespondidos = repository.topicosNaoRespondidos()
+        return topicosNaoRespondidos.map {
+            topicoViewMapper.map(it)
+        }
+    }
 }
