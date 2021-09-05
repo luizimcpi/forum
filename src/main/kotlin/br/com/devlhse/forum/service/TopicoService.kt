@@ -10,12 +10,14 @@ import br.com.devlhse.forum.repository.TopicoRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import javax.persistence.EntityManager
 
 @Service
 class TopicoService(private val topicoViewMapper: TopicoViewMapper,
                     private val topicoFormMapper: TopicoFormMapper,
                     private val repository: TopicoRepository,
-                    private val notFoundMessage: String = "Tópico não encontrado!"
+                    private val notFoundMessage: String = "Tópico não encontrado!",
+                    private val entityManager: EntityManager
 ) {
 
 
@@ -24,6 +26,7 @@ class TopicoService(private val topicoViewMapper: TopicoViewMapper,
         paginacao: Pageable
     ): Page<TopicoView> {
         val topicos = if(nomeCurso == null){
+            print(entityManager)
             repository.findAll(paginacao)
         } else {
             repository.findByCursoNome(nomeCurso, paginacao)
